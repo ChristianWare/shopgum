@@ -21,8 +21,14 @@ export default function RootLayout({
   return (
     <html lang='en'>
       <body className={`${interTight.variable}`}>
-        <Nav />
-        {children}
+        <div
+          style={{
+            marginTop: "10rem",
+          }}
+        >
+          <Nav />
+          {children}
+        </div>
       </body>
     </html>
   );

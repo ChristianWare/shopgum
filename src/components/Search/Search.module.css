@@ -1,0 +1,16 @@
+.form {
+  position: relative;
+  display: flex;
+}
+
+.searchIconContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon {
+  color: var(--black);
+  width: 2.5rem;
+  height: 2.5rem;
+}
