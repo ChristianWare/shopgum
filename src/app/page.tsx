@@ -1,7 +1,11 @@
 
 export default function Home() {
   return (
-    <main>
+    <main style={{
+      marginTop: "10rem"
+    }}>
+
+
       <h1>Hello</h1>
     </main>
   );
