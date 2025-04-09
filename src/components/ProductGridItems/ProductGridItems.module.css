@@ -1,0 +1,45 @@
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 2rem;
+  width: 100%;
+  padding: 1rem 0;
+}
+
+.product {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+.product:hover {
+  transform: scale(1.03);
+}
+
+.imageContainer {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  background-color: #f5f5f5;
+  width: 100%;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+.title {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.price {
+  font-size: 0.875rem;
+  color: #666;
+  margin: 0;
+}

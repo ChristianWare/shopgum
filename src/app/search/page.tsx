@@ -26,6 +26,8 @@ export default async function SearchPage({
 
     const resultsText = products.length > 1 ? "results" : "Result";
 
+    console.log(products)
+
     return (
       <div>
         <h1>SearchPage</h1>
