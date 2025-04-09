@@ -6,13 +6,17 @@ import {
 } from "../constants";
 import { isShopifyError } from "../type-gaurds";
 import { ensureStartWith } from "../utils";
+import { getCollectionsQuery } from "./queries/collection";
 import { getMenuQuery } from "./queries/menu";
 import { getProductQuery, getProductsQuery } from "./queries/product"; // Import both queries
 import {
+  Collection,
   Connection,
   Image,
   Menu,
   Product,
+  ShopifyCollection,
+  ShopifyCollectionOperation,
   ShopifyMenuOperation,
   ShopifyProduct,
   ShopifyProductsOperation,
@@ -190,4 +194,59 @@ export async function getProducts({
   });
 
   return reshapeProducts(removeEdgesAndNodes(res.body.data.products));
+}
+
+function reshapeCollection(
+  collection: ShopifyCollection
+): Collection | undefined {
+  if (!collection) return undefined;
+
+  return {
+    ...collection,
+    path: `/search/${collection.handle}`,
+  };
+}
+
+function reshapeCollections(collections: ShopifyCollection[]) {
+  const reshapedCollections = [];
+
+  for (const collection of collections) {
+    if (collection) {
+      const reshapedCollection = reshapeCollection(collection);
+
+      if (reshapedCollection) {
+        reshapedCollections.push(reshapedCollection);
+      }
+    }
+  }
+
+  return reshapedCollections;
+}
+
+export async function getCollections(): Promise<Collection[]> {
+  const res = await shopifyFetch<ShopifyCollectionOperation>({
+    query: getCollectionsQuery,
+    tags: [TAGS.collections],
+  });
+
+  const shopifyCollections = removeEdgesAndNodes(res?.body?.data?.collections);
+  const collections = [
+    {
+      handle: "",
+      title: "All",
+      description: "All products",
+      seo: {
+        title: "All",
+        description: "All products",
+      },
+      path: "/search",
+      updatedAt: new Date().toISOString(),
+    },
+    // Filter out the hidden products
+    ...reshapeCollections(shopifyCollections).filter(
+      (collection) => !collection.handle.startsWith("hidden")
+    ),
+  ];
+
+  return collections;
 }

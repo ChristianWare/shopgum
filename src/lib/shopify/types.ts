@@ -84,7 +84,6 @@ export type Product = Omit<ShopifyProduct, "variants" | "images"> & {
   images: Image[];
 };
 
-
 export type ShopifyProductsOperation = {
   data: {
     products: Connection<ShopifyProduct>;
@@ -93,5 +92,23 @@ export type ShopifyProductsOperation = {
     query?: string;
     reverse?: boolean;
     sortKey?: string;
+  };
+};
+
+export type ShopifyCollection = {
+  handle: string;
+  title: string;
+  description: string;
+  seo: SEO;
+  updatedAt: string;
+};
+
+export type Collection = ShopifyCollection & {
+  path: string;
+};
+
+export type ShopifyCollectionOperation = {
+  data: {
+    collections: Connection<ShopifyCollection>;
   };
 };
