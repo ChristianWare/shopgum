@@ -1,3 +1,7 @@
+import FilterList from "@/components/FilterList/FilterList";
+import Collections from "@/components/Search/Collections";
+import { sorting } from "@/lib/constants";
+
 export default function SearchLayout({
   children,
 }: {
@@ -5,9 +9,15 @@ export default function SearchLayout({
 }) {
   return (
     <>
-      <div>{/* Collections component to go here in the future */}</div>
+      <div>
+        <Collections />
+      </div>
       <div>{children}</div>
-      <div>{/* FilterList component to go here in the future */}</div>
+      <div>
+        
+
+        <FilterList list={sorting} title='Sort By' />
+      </div>
     </>
   );
 }
