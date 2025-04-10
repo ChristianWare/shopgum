@@ -5,6 +5,7 @@ import { Nav } from "@/components/Nav/Nav";
 import { CartProvider } from "@/components/Cart/cart-context";
 import { cookies } from "next/headers";
 import { getCart } from "@/lib/shopify";
+import { ModalProvider } from "@/context/ModalContext";
 
 const interTight = Inter_Tight({
   variable: "--interTight",
@@ -33,10 +34,12 @@ export default async function RootLayout({
             marginTop: "10rem",
           }}
         >
-          <CartProvider cartPromise={cart}>
-            <Nav />
-            {children}
-          </CartProvider>
+          <ModalProvider>
+            <CartProvider cartPromise={cart}>
+              <Nav />
+              {children}
+            </CartProvider>
+          </ModalProvider>
         </div>
       </body>
     </html>

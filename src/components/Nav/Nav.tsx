@@ -1,9 +1,15 @@
+"use client";
+
 import { getMenu } from "@/lib/shopify";
 import styles from "./Nav.module.css";
 
 import Search from "../Search/Search";
 import { Menu } from "@/lib/shopify/types";
 import Link from "next/link";
+import dynamic from "next/dynamic";
+
+// Use dynamic import for Cart to avoid hydration issues
+const Cart = dynamic(() => import("../Cart/Cart"), { ssr: false });
 
 export async function Nav() {
   const menu = await getMenu("next-js-frontend-menu");
@@ -31,8 +37,7 @@ export async function Nav() {
             </ul>
           ) : null}
           <div className={styles.iconContainer}>
-            {/* <Cart className={styles.icon} /> */}
-            Cart Here
+            <Cart />
           </div>
         </div>
       </nav>
