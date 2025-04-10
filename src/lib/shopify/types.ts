@@ -198,3 +198,12 @@ export type ShopifyProductRecommendationsOperation = {
     productId: string;
   };
 };
+
+export type ShopifyCartOperation = {
+  data: {
+    cart: ShopifyCart;
+  };
+  variables: {
+    cartId: string;
+  };
+};

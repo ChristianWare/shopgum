@@ -6,6 +6,7 @@ import {
 import { isShopifyError } from "../type-gaurds";
 import { ensureStartWith } from "../utils";
 import { addToCartMutation } from "./mutations/cart";
+import { getCartQuery } from "./queries/cart";
 import {
   getCollectionProductsQuery,
   getCollectionsQuery,
@@ -21,6 +22,7 @@ import {
   Product,
   ShopifyAddToCartOperation,
   ShopifyCart,
+  ShopifyCartOperation,
   ShopifyCollection,
   ShopifyCollectionOperation,
   ShopifyCollectionProductsOperation,
@@ -331,4 +333,23 @@ export async function getProductRecommendations(
   });
 
   return reshapeProducts(res.body.data.productRecommendations);
+}
+
+export async function getCart(
+  cartId: string | undefined
+): Promise<Cart | undefined> {
+  if (!cartId) return undefined;
+
+  const res = await shopifyFetch<ShopifyCartOperation>({
+    query: getCartQuery,
+    variables: { cartId },
+    tags: [TAGS.cart],
+  });
+
+  // old carts becomes 'null' when you checkout
+  if (!res.body.data.cart) {
+    return undefined;
+  }
+
+  return reshapeCart(res.body.data.cart);
 }
