@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   HIDDEN_PRODUCT_TAG,
   SHOPIFY_GRAPHQL_API_ENDPOINT,
@@ -6,20 +5,29 @@ import {
 } from "../constants";
 import { isShopifyError } from "../type-gaurds";
 import { ensureStartWith } from "../utils";
-import { getCollectionProductsQuery, getCollectionsQuery } from "./queries/collection";
-import { getMenuQuery } from "./queries/menu";
-import { getProductQuery, getProductsQuery } from "./queries/product"; // Import both queries
+import { addToCartMutation } from "./mutations/cart";
 import {
+  getCollectionProductsQuery,
+  getCollectionsQuery,
+} from "./queries/collection";
+import { getMenuQuery } from "./queries/menu";
+import { getProductQuery, getProductRecommendationsQuery, getProductsQuery } from "./queries/product"; // Import both queries
+import {
+  Cart,
   Collection,
   Connection,
   Image,
   Menu,
   Product,
+  ShopifyAddToCartOperation,
+  ShopifyCart,
   ShopifyCollection,
   ShopifyCollectionOperation,
   ShopifyCollectionProductsOperation,
   ShopifyMenuOperation,
   ShopifyProduct,
+  ShopifyProductOperation,
+  ShopifyProductRecommendationsOperation,
   ShopifyProductsOperation,
 } from "./types";
 
@@ -163,7 +171,7 @@ export async function getMenu(handle: string): Promise<Menu[]> {
 
 // Function to get a single product by handle
 export async function getProduct(handle: string): Promise<Product | undefined> {
-  const res = await shopifyFetch<any>({
+  const res = await shopifyFetch<ShopifyProductOperation>({
     query: getProductQuery,
     tags: [TAGS.products],
     variables: {
@@ -171,7 +179,7 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
     },
   });
 
-  return reshapeProduct(res.body.data.product);
+  return reshapeProduct(res.body.data.product, false);
 }
 
 // Updated function to get multiple products with filtering and sorting
@@ -279,4 +287,48 @@ export async function getCollectionProducts({
   return reshapeProducts(
     removeEdgesAndNodes(res.body.data.collection.products)
   );
+}
+
+function reshapeCart(cart: ShopifyCart): Cart {
+  if (!cart.cost?.totalTaxAmount) {
+    cart.cost.totalTaxAmount = {
+      amount: "0.0",
+      currencyCode: "USD",
+    };
+  }
+
+  return {
+    ...cart,
+    lines: removeEdgesAndNodes(cart.lines),
+  };
+}
+
+export async function addToCart(
+  cartId: string,
+  lines: { merchandiseId: string; quantity: number }[]
+): Promise<Cart> {
+  const res = await shopifyFetch<ShopifyAddToCartOperation>({
+    query: addToCartMutation,
+    variables: {
+      cartId,
+      lines,
+    },
+    cache: "no-cache",
+  });
+
+  return reshapeCart(res.body.data.cartLinesAdd.cart);
+}
+
+export async function getProductRecommendations(
+  productId: string
+): Promise<Product[]> {
+  const res = await shopifyFetch<ShopifyProductRecommendationsOperation>({
+    query: getProductRecommendationsQuery,
+    tags: [TAGS.products],
+    variables: {
+      productId,
+    },
+  });
+
+  return reshapeProducts(res.body.data.productRecommendations);
 }
