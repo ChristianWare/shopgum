@@ -9,22 +9,21 @@ export default function Search() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+     e.preventDefault();
 
-    const val = e.target as HTMLFormElement;
-    // const search = val.target as HTMLInputElement;
-    const search = val.target as unknown as HTMLInputElement;
-    const newParams = new URLSearchParams(searchParams.toString());
+     const val = e.target as HTMLFormElement;
+     const search = val.search as HTMLInputElement;
+     const newParams = new URLSearchParams(searchParams.toString());
 
-    if (search.value) {
-      newParams.set("q", search.value);
-    } else {
-      newParams.delete("q");
-    }
+     if (search.value) {
+       newParams.set("q", search.value);
+     } else {
+       newParams.delete("q");
+     }
 
-    router.push(createUrl("/search", newParams));
-  }
+     router.push(createUrl("/search", newParams));
+   }
 
   return (
     <form onSubmit={onSubmit} className={styles.form}>
